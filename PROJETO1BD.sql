@@ -2,6 +2,8 @@ CREATE DATABASE projeto1;
 USE projeto1;
 drop table funcionario;
 
+#criando as tabelas
+
 CREATE TABLE departamento(
 id_dept		INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 nome_depto 		VARCHAR(30),
@@ -34,6 +36,8 @@ FOREIGN KEY id_funcionario(id_funcionario)
 REFERENCES funcionario(id_funcionario)
 )
 ;
+
+#inserindo valores nas tabelas
 
 INSERT INTO departamento(
 nome_depto ,
@@ -365,48 +369,58 @@ VALUES(
 )
 ;
 
+#número de funcuinários por departamento
+
 SELECT d.nome_depto,COUNT(*) 
 FROM funcionario f
 JOIN departamento d
 ON d.id_dept = f.id_dept
 GROUP BY f.id_dept;
 
+#soma de salário e comissão de todos os funcionários
 SELECT SUM(salario)+SUM(comissao)
 FROM funcionario;
 
+#soma de salário e comissão por depçartamento
 SELECT SUM(salario)+SUM(comissao)
 FROM funcionario
 GROUP BY id_dept;
 
+#media salarial por cargo
 SELECT AVG(salario), CARGO
 FROM funcionario
 GROUP BY cargo;
 
+#média de salário por cidade
 SELECT AVG(salario), d.cidade_depto
 FROM funcionario f
 JOIN departamento d
 ON f.id_dept = d.id_dept 
 GROUP BY d.cidade_depto;
 
+#funcionários por cidade
 SELECT d.cidade_depto,COUNT(*) 
 FROM funcionario f
 JOIN departamento d
 ON d.id_dept = f.id_dept
 GROUP BY d.cidade_depto;
 
+#funcionário mais novo
 SELECT * FROM funcionario
 WHERE dt_admissao IN (SELECT MAX(dt_admissao)
 						FROM funcionario)
 ;
-
+#funcionário mais antigo
 SELECT * FROM funcionario
 WHERE dt_admissao IN (SELECT MIN(dt_admissao)
 						FROM funcionario)
 ;
 
+#funcionários que nasceram no mes 11
 SELECT * FROM funcionario
 WHERE RIGHT(LEFT(dt_nascimento,7),2) = "11";
 
+#funcionario mais novo de cada departamento
 SELECT * FROM funcionario
 WHERE (id_dept, dt_admissao) IN (SELECT id_dept,MAX(dt_admissao)
 								FROM funcionario
@@ -414,6 +428,7 @@ WHERE (id_dept, dt_admissao) IN (SELECT id_dept,MAX(dt_admissao)
 ORDER BY id_dept
 ;
 
+#funcionario mais antigo de cada departamento
 SELECT * FROM funcionario
 WHERE (id_dept, dt_admissao) IN (SELECT id_dept,MIN(dt_admissao)
 						FROM funcionario
@@ -421,6 +436,7 @@ WHERE (id_dept, dt_admissao) IN (SELECT id_dept,MIN(dt_admissao)
 ORDER BY id_dept
 ;
 
+#funcionario que saiu de ferias por ultimo
 SELECT * FROM funcionario f	
 JOIN folga fl
 ON f.id_funcionario = fl.id_funcionario
@@ -428,23 +444,22 @@ WHERE fl.data_inicio IN (SELECT max(data_inicio) FROM folga WHERE status = "FERI
 AND fl.status = "FERIAS"
 ; 
 
+#ultimo funcionario que folgou sem ser nas ferias
 SELECT * FROM funcionario f	
 JOIN folga fl
 ON f.id_funcionario = fl.id_funcionario
 WHERE fl.data_inicio IN (SELECT max(data_inicio) FROM folga WHERE status = "FERIAS")
 AND fl.status <> "FERIAS"
 ; 
-SELECT * FROM folga
-WHERE status = "FERIAS";
 
+#duracao média das férias
 SELECT AVG(DATEDIFF(data_fim,data_inicio)) FROM folga
 WHERE status = "FERIAS";
 
+#qual mes saiu mais gente de férias
 SELECT MONTH(data_inicio),COUNT(*) FROM folga
 WHERE status = "FERIAS"
 GROUP BY MONTH(data_inicio)
 ORDER BY COUNT(*) DESC
 LIMIT 1
 ;
-
-SELECT * FROM FOLGA;
